@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - localnet
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.development
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/umbrella
+      - "app-build:/umbrella/_build"
+      - "app-deps:/umbrella/deps"
+    ports:
+      - "4001:4000"
+    depends_on:
+      - rabbitmq
+    networks:
+      - localnet
+
+volumes:
+  rabbitmq-data: {}
+  app-build: {}
+  app-deps: {}
+
+networks:
+  localnet:
+    driver: bridge

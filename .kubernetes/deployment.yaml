@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umbrella
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: umbrella
+    spec:
+      containers:
+        - name: umbrella
+          image: umbrella:local
+          imagePullPolicy: Never
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_COOKIE
+              value: "cookie"
